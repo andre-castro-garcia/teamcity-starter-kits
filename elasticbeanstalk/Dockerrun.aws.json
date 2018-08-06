@@ -1,0 +1,62 @@
+{
+	"AWSEBDockerrunVersion": 2,
+	"volumes": [{
+		"name": "teamcity-agent-config",
+		"host": {
+			"sourcePath": "/var/app/teamcity-agents/config"
+		}
+	}, {
+		"name": "teamcity-server-datadir",
+		"host": {
+			"sourcePath": "/var/app/teamcity-server/datadir"
+		}
+	}, {
+		"name": "teamcity-server-logs",
+		"host": {
+			"sourcePath": "/var/app/teamcity-server/logs"
+		}
+	}],
+	"containerDefinitions": [{
+			"name": "teamcity-server",
+			"image": "jetbrains/teamcity-server:latest",
+			"essential": true,
+			"memory": 2048,
+			"portMappings": [{
+				"hostPort": 80,
+				"containerPort": 8111
+			}],
+			"mountPoints": [{
+				"sourceVolume": "teamcity-server-datadir",
+				"containerPath": "/data/teamcity_server/datadir",
+				"readOnly": false
+			}, {
+				"sourceVolume": "teamcity-server-logs",
+				"containerPath": "/opt/teamcity/logs",
+				"readOnly": false
+			}]
+		},
+		{
+			"name": "teamcity-agent",
+			"image": "jetbrains/teamcity-agent:latest",
+			"essential": true,
+			"memory": 1024,
+			"links": [
+				"teamcity-server"
+			],
+			"environment": [{
+					"name": "SERVER_URL",
+					"value": "http://teamcity-server:8111"
+				},
+				{
+					"name": "AGENT_NAME",
+					"value": "ubuntu-agent"
+				}
+			],
+			"mountPoints": [{
+				"sourceVolume": "teamcity-agent-config",
+				"containerPath": "/data/teamcity_agent/conf",
+				"readOnly": false
+			}]
+		}
+	]
+}
