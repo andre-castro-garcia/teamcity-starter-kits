@@ -4,7 +4,6 @@ Este projeto armazena os scripts de implantação do servidor de CI/CD da JetBra
 
   - Provisionar novas instâncias do servidor **JetBrains TeamCity Server**
   - Provisionar novos agentes para o seu servidor já implantado
-  - 
 
 ## novos recursos
 
